@@ -1,10 +1,29 @@
-import { CardMedia, Container, Grid, TextField, Card, CardContent } from "@mui/material";
+import { Container, Grid, TextField } from "@mui/material";
+import { useEffect, useState } from "react";
+import RecipeItem from "../../components/recipe-item";
 
 
 
 export default function Recipes(){
+    const [recipes, setRecipes] = useState([]);
+    const searchRecipes = () => {
+
+        const url = new URL( "https://api.spoonacular.com/recipes/complexSearch");
+        url.searchParams.append('apiKey','6984efcdae8c422ebdbefafc49d574f7')
+
+        fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+         //update recipes state
+         //console.log({data});
+         setRecipes(data.results)
+        })
+        .catch((error) => console.log (error));
+    };
+    useEffect(searchRecipes, [])
+
     return(
-        <Container sx={{my: '2rem'}} maxWidth="sm">
+        <Container sx={{my: '2rem'}}>
      <TextField 
      fullWidth
       id="outlined-basic" 
@@ -13,16 +32,9 @@ export default function Recipes(){
 
 
       <Grid sx={{mt:'1rem'}} container spacing={3}>
-       <Grid item xs={4}>
-        <Card>
-        <CardMedia 
-        sx={{height: 140}}
-        image="https://images.unsplash.com/photo-1708312609475-0c339fa63bc5?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"/>
-        </Card>
-        <CardContent variant="h5">Recipe Name</CardContent>
-       </Grid>
+      {recipes.map((recipe) => <RecipeItem key={recipe.id} title={recipe.title} image={recipe.image}/>)}
 
       </Grid>
         </Container>
-    )
+    );
 }

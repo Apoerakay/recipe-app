@@ -6,10 +6,13 @@ import RecipeItem from "../../components/recipe-item";
 
 export default function Recipes(){
     const [recipes, setRecipes] = useState([]);
+   const [ searchItem, setSearchItem] = useState("");
+   
     const searchRecipes = () => {
 
         const url = new URL( "https://api.spoonacular.com/recipes/complexSearch");
-        url.searchParams.append('apiKey','6984efcdae8c422ebdbefafc49d574f7')
+        url.searchParams.append('apiKey',process.env.REACT_APP_SPOONACULAR_API_KEY);
+        url.searchParams.append('query', searchItem);
 
         fetch(url)
         .then((response) => response.json())
@@ -28,7 +31,11 @@ export default function Recipes(){
      fullWidth
       id="outlined-basic" 
       label="Enter a keyword to search recipes and hit enter" 
-      variant="outlined" />
+      variant="outlined"
+      value={searchItem}
+      onChange={(event) => setSearchItem(event.target.value)}
+      onKeyDown={event => event.key == 'Enter' && searchRecipes()}
+       />
 
 
       <Grid sx={{mt:'1rem'}} container spacing={3}>
